@@ -38,11 +38,13 @@ class ContrastiveEncoder(nn.Module):
         r = torch.quantile(dist[mask], self.r_percentile).clamp(min=1e-3)
 
         # expand to 2B
-        y_all = torch.cat([y_true, y_true], dim=0)
-        dist_all = torch.abs(y_all.unsqueeze(0) - y_all.unsqueeze(1))
-        pos_base = (dist_all <= r).float()
+        # y_all = torch.cat([y_true, y_true], dim=0)
+        # dist_all = torch.abs(y_all.unsqueeze(0) - y_all.unsqueeze(1))
+        # pos_base = (dist_all <= r).float()
+        pos_base = (dist <= r).float()
         pos_base.fill_diagonal_(0)
         
+
         pos_mask = torch.zeros(2 * B, 2 * B, device=y_true.device)
         # ori to ori
         pos_mask[:B, :B] = pos_base
